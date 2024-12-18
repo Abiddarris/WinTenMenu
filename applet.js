@@ -1,6 +1,8 @@
 const Applet = imports.ui.applet;
 const PopupMenu = imports.ui.popupMenu;
 const St = imports.gi.St;
+const {get_categories} = require('./app');
+const Ui = require('./ui');
 
 class StartMenu extends Applet.IconApplet {
     constructor(orientation, panel_height, instance_id) {
@@ -20,6 +22,7 @@ class StartMenu extends Applet.IconApplet {
             height: 700
         });
 
+        this._box.add_actor(Ui.createAppListUI(get_categories()));
         this.menu.addActor(this._box);
     }
 
