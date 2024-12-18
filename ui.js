@@ -24,7 +24,9 @@ class AppItemLayout {
     constructor(app) {
         this.app = app;
         this.actor = new St.BoxLayout({ reactive: true });
-        this.label = new St.Label();
+        this.label = new St.Label({
+            style: "padding-left: 7px"
+        });
 
         const clutterText = this.label.get_clutter_text();
         clutterText.set_markup(app.get_name());
