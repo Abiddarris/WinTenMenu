@@ -2,7 +2,10 @@ const St = imports.gi.St;
 
 function createAppListUI(categories) {
     const scrollView = new St.ScrollView();
-    const applications = new St.BoxLayout({ vertical: true }); 
+    const applications = new St.BoxLayout({ 
+        vertical: true,
+        style: "spacing: 12px;"
+    }); 
 
     categories.forEach(category => {
         category.apps.forEach(app => {
