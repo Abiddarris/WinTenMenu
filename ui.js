@@ -19,7 +19,8 @@ function createAppListUI(categories) {
 class AppItemLayout {
 
     constructor(app) {
-        this.actor = new St.BoxLayout();
+        this.app = app;
+        this.actor = new St.BoxLayout({ reactive: true });
         this.label = new St.Label();
 
         const clutterText = this.label.get_clutter_text();
@@ -27,6 +28,14 @@ class AppItemLayout {
 
         this.actor.add(this._get_icon(app));
         this.actor.add(this.label);
+
+        this.actor.connect('button-release-event', this._onReleaseEvent.bind(this));
+    }
+
+    _onReleaseEvent(actor, event) {
+        if (event.get_button() === 1) {
+            this.app.open_new_window(-1);
+        }
     }
 
     _get_icon(app) {
