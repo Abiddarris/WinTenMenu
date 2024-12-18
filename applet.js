@@ -4,7 +4,7 @@ const St = imports.gi.St;
 const {get_categories} = require('./app');
 const Ui = require('./ui');
 
-class StartMenu extends Applet.IconApplet {
+class StartMenu extends Applet.TextIconApplet {
     constructor(orientation, panel_height, instance_id) {
         super(orientation, panel_height, instance_id);
 

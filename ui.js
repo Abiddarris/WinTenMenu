@@ -25,6 +25,11 @@ class AppItemLayout {
         const clutterText = this.label.get_clutter_text();
         clutterText.set_markup(app.get_name());
 
+        this.actor.add(this._get_icon(app));
         this.actor.add(this.label);
+    }
+
+    _get_icon(app) {
+        return app.create_icon_texture(30);
     }
 }
