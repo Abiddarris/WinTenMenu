@@ -32,7 +32,10 @@ class AppItemLayout {
         clutterText.set_markup(app.get_name());
 
         this.actor.add(this._get_icon(app));
-        this.actor.add(this.label);
+        this.actor.add(this.label, {
+            y_fill: false,
+            y_align: St.Align.MIDDLE
+        });
 
         this.actor.connect('button-release-event', this._onReleaseEvent.bind(this));
     }
