@@ -1,7 +1,6 @@
 const Applet = imports.ui.applet;
 const PopupMenu = imports.ui.popupMenu;
 const St = imports.gi.St;
-const {get_categories} = require('./app');
 const Ui = require('./ui');
 
 class StartMenu extends Applet.TextIconApplet {
@@ -14,18 +13,9 @@ class StartMenu extends Applet.TextIconApplet {
 
         this.menuManager = new PopupMenu.PopupMenuManager(this);
         this.menu = new Applet.AppletPopupMenu(this, this.orientation);
-        this.menuManager.addMenu(this.menu)       
+        this.menuManager.addMenu(this.menu);       
 
-        this._box = new St.BoxLayout({
-            vertical: false,
-            width: 300,
-            height: 700
-        });
-
-        this._box.add(Ui.create_sidebar());
-        this._box.add(Ui.createAppListUI(this, get_categories()));
-
-        this.menu.addActor(this._box);
+        this.menu.addActor(Ui.createUI(this));
     }
 
     on_applet_clicked() {

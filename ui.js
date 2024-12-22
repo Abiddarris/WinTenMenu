@@ -1,5 +1,25 @@
 const St = imports.gi.St;
 const Gtk = imports.gi.Gtk;
+const PopupMenu = imports.ui.popupMenu;
+const Main = imports.ui.main;
+const {get_categories} = require('./app');
+
+function createUI(applet) {
+   const box = new St.BoxLayout({
+        vertical: false,
+        width: 300,
+        height: 700,
+    });
+
+    const sidebar = new SideBar(applet);
+
+    box.add_actor(sidebar.actor);
+    box.add_actor(createAppListUI(applet, get_categories()));
+
+    sidebar.attachPopupMenu(box);
+    
+    return box;
+}
 
 function createAppListUI(applet, categories) {
     const apps = _flattenCategories(categories)
@@ -11,7 +31,7 @@ function createAppListUI(applet, categories) {
     }); 
 
     apps.forEach(app => applications.add(new AppItemLayout(applet, app).actor))
-                
+
     scrollView.add_actor(applications);
 
     return scrollView;
@@ -24,10 +44,6 @@ function _flattenCategories(categories) {
     });
 
     return apps;
-}
-
-function create_sidebar() {
-    return new SideBar().actor;
 }
 
 class AppItemLayout {
@@ -82,8 +98,10 @@ class SideBar {
 
     option_padding = 7;
     icon_size = 30;
+    options = [];
 
-    constructor() {
+    constructor(applet) {
+        this.applet = applet;
         this.actor = new St.BoxLayout({ 
             vertical: true,
             style: `padding-top: 7px; min-width: ${this.icon_size + this.option_padding}px;`
@@ -98,12 +116,18 @@ class SideBar {
         this.actor.add(option.actor, {
             x_fill: false
         });
+        this.options.push(option);
+    }
+
+    attachPopupMenu(box) {
+        this.options.forEach(option => option.attachPopupMenu(box));
     }
 }
 
 class SidebarOption {
 
     constructor(sidebar, label, icon_name) {
+        this.sidebar = sidebar;
         this.label_string = label;
         this.base_container_style = `padding: ${sidebar.option_padding}px; `
 
@@ -113,6 +137,7 @@ class SidebarOption {
             style: this.base_container_style
         });
 
+        this.actor.connect('button-release-event', this.on_release_event.bind(this));
         this.actor.connect('enter-event', () => {
             this.actor.style = this.base_container_style + "background-color: #222222; transition: background-color 0.3s ease-in-out;";
             this.actor.add(this.label, {
@@ -140,10 +165,58 @@ class SidebarOption {
 
         this.actor.add(this.icon);
     }
+
+    attachPopupMenu(box) {
+    }
 }
 
 class Power extends SidebarOption {
+
     constructor(sidebar) {
         super(sidebar, "Power", "system-shutdown-symbolic");
+    }
+
+    attachPopupMenu(box) {
+        this._popup_menu = new PopupMenu.PopupMenu(this.actor);        
+        this._popup_menu.actor.hide();
+
+        this._addMenuItem("Shutdown", "system-shutdown-symbolic");
+        this._addMenuItem("Restart", "system-restart-symbolic");
+
+        this.popupMenuBox = new St.BoxLayout({ style_class: '', vertical: true, reactive: true });
+        this.popupMenuBox.add_actor(this._popup_menu.actor);
+        this.popupMenuBox.height = 0;
+        this.popupMenuBox.width = 0;
+
+        box.add(this.popupMenuBox, {expand: false, x_fill: false,
+                                                    x_align: St.Align.START, y_align: St.Align.MIDDLE,});
+    }
+
+    _addMenuItem(label, iconName) {
+        let menuItem = new PopupMenu.PopupIconMenuItem(label, iconName, St.IconType.SYMBOLIC);
+
+        this._popup_menu.addMenuItem(menuItem);
+    }
+
+    on_release_event() {
+        if (this._popup_menu.isOpen) {
+            this._popup_menu.toggle();
+            return;
+        }
+        const monitor = Main.layoutManager.findMonitorForActor(this._popup_menu.actor);
+        let [mx, my] = this.actor.get_transformed_position();
+        my += 20;
+        
+        if (mx > monitor.x + monitor.width - this._popup_menu.actor.width) {
+            mx -= this._popup_menu.actor.width;
+        }
+        if (my > monitor.y + monitor.height - this._popup_menu.actor.height - 40/*allow for panel*/) {
+            my -= this._popup_menu.actor.height;
+        }
+
+        let [cx, cy] = this.popupMenuBox.get_transformed_position();
+        
+        this._popup_menu.actor.set_anchor_point(Math.round(cx - mx), Math.round(cy - my));
+        this._popup_menu.toggle();
     }
 }
