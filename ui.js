@@ -2,21 +2,28 @@ const St = imports.gi.St;
 const Gtk = imports.gi.Gtk;
 
 function createAppListUI(categories) {
+    const apps = _flattenCategories(categories)
+    apps.sort((a, b) => a.get_name().localeCompare(b.get_name(), undefined,
+                                      {sensitivity: "base", ignorePunctuation: true}));
     const scrollView = new St.ScrollView();
     const applications = new St.BoxLayout({ 
         vertical: true,
     }); 
 
-    categories.forEach(category => {
-        category.apps.forEach(app => {
-            applications.add(new AppItemLayout(app).actor);
-        });
-    });
-
-
+    apps.forEach(app => applications.add(new AppItemLayout(app).actor))
+                
     scrollView.add_actor(applications);
 
     return scrollView;
+}
+
+function _flattenCategories(categories) {
+    let apps = [];
+    categories.forEach(category => {
+        category.apps.forEach(app => apps.push(app));
+    });
+
+    return apps;
 }
 
 function create_sidebar() {
