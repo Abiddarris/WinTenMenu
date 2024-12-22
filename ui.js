@@ -1,7 +1,7 @@
 const St = imports.gi.St;
 const Gtk = imports.gi.Gtk;
 
-function createAppListUI(categories) {
+function createAppListUI(applet, categories) {
     const apps = _flattenCategories(categories)
     apps.sort((a, b) => a.get_name().localeCompare(b.get_name(), undefined,
                                       {sensitivity: "base", ignorePunctuation: true}));
@@ -10,7 +10,7 @@ function createAppListUI(categories) {
         vertical: true,
     }); 
 
-    apps.forEach(app => applications.add(new AppItemLayout(app).actor))
+    apps.forEach(app => applications.add(new AppItemLayout(applet, app).actor))
                 
     scrollView.add_actor(applications);
 
@@ -34,7 +34,8 @@ class AppItemLayout {
 
     base_list_style = "padding-left: 9px; padding-top: 9px; padding-bottom: 9px; ";
 
-    constructor(app) {
+    constructor(applet, app) {
+        this.applet = applet;
         this.app = app;
         this.actor = new St.BoxLayout({
              reactive: true, 
@@ -68,6 +69,7 @@ class AppItemLayout {
     _onReleaseEvent(actor, event) {
         if (event.get_button() === 1) {
             this.app.open_new_window(-1);
+            this.applet.closeMenu();
         }
     }
 

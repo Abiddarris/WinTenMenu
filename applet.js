@@ -23,13 +23,17 @@ class StartMenu extends Applet.TextIconApplet {
         });
 
         this._box.add(Ui.create_sidebar());
-        this._box.add(Ui.createAppListUI(get_categories()));
+        this._box.add(Ui.createAppListUI(this, get_categories()));
 
         this.menu.addActor(this._box);
     }
 
     on_applet_clicked() {
         this.menu.toggle();
+    }
+
+    closeMenu() {
+        this.menu.close();
     }
 }
 
