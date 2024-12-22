@@ -17,12 +17,14 @@ class StartMenu extends Applet.TextIconApplet {
         this.menuManager.addMenu(this.menu)       
 
         this._box = new St.BoxLayout({
-            vertical: true,
+            vertical: false,
             width: 300,
             height: 700
         });
 
-        this._box.add_actor(Ui.createAppListUI(get_categories()));
+        this._box.add(Ui.create_sidebar());
+        this._box.add(Ui.createAppListUI(get_categories()));
+
         this.menu.addActor(this._box);
     }
 
