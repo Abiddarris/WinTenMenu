@@ -1,0 +1,21 @@
+{
+    "menu-width": {
+        "type" : "spinbutton",
+        "default" : 15,
+        "min" : 15,
+        "max" : 100,
+        "step" : 1,
+        "units" : "%",
+        "description" : "Menu width"
+    },
+    "menu-height": {
+        "type" : "spinbutton",
+        "default" : 90,
+        "min" : 50,
+        "max" : 100,
+        "step" : 1,
+        "units" : "%",
+        "description" : "Menu Height"
+    }
+}
+

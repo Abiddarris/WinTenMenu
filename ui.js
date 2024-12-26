@@ -7,36 +7,67 @@ const PopupMenu = imports.ui.popupMenu;
 const Main = imports.ui.main;
 const Clutter = imports.gi.Clutter;
 const {get_categories} = require('./app');
+const Display = require('./display');
 
-function createUI(applet) {
-    let box = new Clutter.Actor();
-    box.set_layout_manager(new Clutter.BinLayout());
+class UI {
+    constructor(applet) {
+        this.applet = applet;
+    }
 
-    const sidebar = new SideBar(applet);
-    const appList = createAppListUI(applet, get_categories());
+    init() {
+        this.actor = new Clutter.Actor();
+        this.actor.set_layout_manager(new Clutter.BinLayout());
 
-    box.add_actor(appList);
-    box.add_actor(sidebar.actor);
+        this.sidebar = new SideBar(this.applet);
+        this.appList = createAppListUI(this, this.applet, get_categories());
 
-    appList.set_x(sidebar.min_width);
+        this.actor.add_actor(this.appList);
+        this.actor.add_actor(this.sidebar.actor);
 
-    sidebar.actor.set_x(0);
-    sidebar.attachPopupMenu(box);
+        this.appList.set_x(this.sidebar.min_width);
 
-    sidebar.actor.set_height(700); 
+        this.sidebar.actor.set_x(0);
+        this.sidebar.attachPopupMenu(this.actor);
 
-    return box;
+        this.sidebar.actor.set_height(this.getMenuHeight()); 
+    }
+
+    getMenuHeight() {
+        return this.applet.preferences["menuHeight"] * Display.getDisplaySize()[1] / 100;
+    }
+
+    getMenuWidth() {
+        return this.applet.preferences["menuWidth"] * Display.getDisplaySize()[0] / 100;
+    }
+
+    menuHeightChanged() {
+        const height = this.getMenuHeight();
+
+        this.sidebar.actor.set_height(height); 
+        this.appList.set_height(height);
+    }
+
+    menuWidthChanged() {
+        const width = this.getMenuWidth();
+
+        this.sidebar.actor.set_width(width); 
+        this.appList.set_width(width);
+
+        log (this.sidebar.actor.get_x());
+        log (this.appList.get_x());
+    }
 }
 
-function createAppListUI(applet, categories) {
+function createAppListUI(ui, applet, categories) {
     const apps = _flattenCategories(categories)
     apps.sort((a, b) => a.get_name().localeCompare(b.get_name(), undefined,
                                       {sensitivity: "base", ignorePunctuation: true}));
     const scrollView = new St.ScrollView({
-        style: "position: absolute; top: 80px; left: 20;"
+        width: ui.getMenuWidth(),
+        height: ui.getMenuHeight()
     });
     const applications = new St.BoxLayout({ 
-        vertical: true,
+        vertical: true
     }); 
 
     apps.forEach(app => applications.add(new AppItemLayout(applet, app).actor))

@@ -2,10 +2,12 @@ const Applet = imports.ui.applet;
 const PopupMenu = imports.ui.popupMenu;
 const St = imports.gi.St;
 const Ui = require('./ui');
+const Settings = require('./settings');
 
 class StartMenu extends Applet.TextIconApplet {
-    constructor(orientation, panel_height, instance_id) {
-        super(orientation, panel_height, instance_id);
+
+    constructor(metadata, orientation, panel_height, instanceId) {
+        super(orientation, panel_height, instanceId);
 
         this.orientation = orientation;
         
@@ -13,9 +15,14 @@ class StartMenu extends Applet.TextIconApplet {
 
         this.menuManager = new PopupMenu.PopupMenuManager(this);
         this.menu = new Applet.AppletPopupMenu(this, this.orientation);
-        this.menuManager.addMenu(this.menu);       
+        this.menuManager.addMenu(this.menu);  
 
-        this.menu.addActor(Ui.createUI(this));
+        this.ui = new Ui.UI(this);  
+
+        Settings.loadSettings(this, metadata, instanceId);
+
+        this.ui.init();
+        this.menu.addActor(this.ui.actor);
     }
 
     on_applet_clicked() {
@@ -27,9 +34,9 @@ class StartMenu extends Applet.TextIconApplet {
     }
 }
 
-function main(metadata, orientation, panel_height, instance_id) {
+function main(metadata, orientation, panel_height, instanceId) {
     try {
-        return new StartMenu(orientation, panel_height, instance_id);        
+        return new StartMenu(metadata, orientation, panel_height, instanceId);        
     } catch (e) {
         console.log(e);
     }
