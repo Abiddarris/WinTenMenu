@@ -106,7 +106,7 @@ class SideBar {
     option_padding = 7;
     icon_size = 30;
     min_width = this.icon_size + this.option_padding;
-    base_style = `padding-top: 7px; min-width: ${this.min_width}px; `;
+    base_style = `padding-top: 7px; min-width: ${this.min_width}px; `; //`
     options = [];
 
     constructor(applet) {
@@ -132,6 +132,7 @@ class SideBar {
 
         console.log(this.actor.style);
 
+        this.addOption(new Settings(this));
         this.addOption(new Power(this));
     }
 
@@ -190,6 +191,9 @@ class SidebarOption {
     attachPopupMenu(box) {
     }
 
+    on_release_event() {
+    }
+
     showLabel() {
         this.actor.add(this.label, {
                 y_fill: false,
@@ -199,6 +203,18 @@ class SidebarOption {
 
     hideLabel() {
         this.actor.remove_child(this.label);    
+    }
+}
+
+class Settings extends SidebarOption {
+
+    constructor(sidebar) {
+        super(sidebar, "Settings", "system-settings");
+    }
+
+    on_release_event() {
+        GLib.spawn_command_line_async("cinnamon-settings");
+        this.sidebar.applet.closeMenu();
     }
 }
 
