@@ -49,12 +49,8 @@ class UI {
 
     menuWidthChanged() {
         const width = this.getMenuWidth();
-
-        this.sidebar.actor.set_width(width); 
-        this.appList.set_width(width);
-
-        log (this.sidebar.actor.get_x());
-        log (this.appList.get_x());
+ 
+        this.appList.set_width(width - this.sidebar.actor.get_width());
     }
 }
 
