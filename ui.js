@@ -16,9 +16,11 @@ function createUI(applet) {
     box.add_actor(sidebar.actor);
 
     appList.set_x(sidebar.min_width);
-    sidebar.actor.set_x(0);
 
+    sidebar.actor.set_x(0);
     sidebar.attachPopupMenu(box);
+
+    sidebar.actor.set_height(700); 
 
     return box;
 }
@@ -109,7 +111,7 @@ class SideBar {
         this.applet = applet;
         this.actor = new St.BoxLayout({ 
             vertical: true,
-            style: `padding-top: 7px; min-width: ${this.min_width}px;`
+            style: `padding-top: 7px; min-width: ${this.min_width}px;`            
         });
 
         console.log(this.actor.style);
