@@ -105,13 +105,28 @@ class SideBar {
     option_padding = 7;
     icon_size = 30;
     min_width = this.icon_size + this.option_padding;
+    base_style = `padding-top: 7px; min-width: ${this.min_width}px; `;
     options = [];
 
     constructor(applet) {
         this.applet = applet;
         this.actor = new St.BoxLayout({ 
             vertical: true,
-            style: `padding-top: 7px; min-width: ${this.min_width}px;`            
+            style: this.base_style,
+            reactive: true            
+        });
+        this.actor.connect('enter-event', () => {
+            this.actor.style = this.base_style + "background-color: #000000; transition: background-color 0.3s ease-in-out;"   
+            this.options.forEach((option) => {
+                option.showLabel();
+            });
+        });
+
+        this.actor.connect('leave-event', () => {
+            this.actor.style = this.base_style;
+            this.options.forEach((option) => {
+                option.hideLabel();
+            });
         });
 
         console.log(this.actor.style);
@@ -147,15 +162,13 @@ class SidebarOption {
         this.actor.connect('button-release-event', this.on_release_event.bind(this));
         this.actor.connect('enter-event', () => {
             this.actor.style = this.base_container_style + "background-color: #222222; transition: background-color 0.3s ease-in-out;";
-            this.actor.add(this.label, {
-                y_fill: false,
-                y_align: St.Align.MIDDLE
-            });        
+            showLabel();
         });
 
         this.actor.connect('leave-event', () => {
             this.actor.style = this.base_container_style + "transition: background-color 0.3s ease-in-out;";
-            this.actor.remove_child(this.label);        
+            
+            hideLabel();
         });
 
         this.icon = new St.Icon({
@@ -174,6 +187,17 @@ class SidebarOption {
     }
 
     attachPopupMenu(box) {
+    }
+
+    showLabel() {
+        this.actor.add(this.label, {
+                y_fill: false,
+                y_align: St.Align.MIDDLE
+        });       
+    }
+
+    hideLabel() {
+        this.actor.remove_child(this.label);    
     }
 }
 
