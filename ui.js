@@ -6,18 +6,20 @@ const Clutter = imports.gi.Clutter;
 const {get_categories} = require('./app');
 
 function createUI(applet) {
-    const box = new Clutter.Actor();
-    
+    let box = new Clutter.Actor();
+    box.set_layout_manager(new Clutter.BinLayout());
+
     const sidebar = new SideBar(applet);
     const appList = createAppListUI(applet, get_categories());
 
-    box.add_child(appList);
-    box.add_child(sidebar.actor);
+    box.add_actor(appList);
+    box.add_actor(sidebar.actor);
 
     appList.set_x(sidebar.min_width);
+    sidebar.actor.set_x(0);
 
     sidebar.attachPopupMenu(box);
-    
+
     return box;
 }
 
