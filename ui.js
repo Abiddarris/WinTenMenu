@@ -217,6 +217,7 @@ class Power extends SidebarOption {
         });
 
         this._addMenuItem("Restart", "system-restart-symbolic", () => {
+            GLib.spawn_command_line_async("reboot");
         });
 
         this.popupMenuBox = new St.BoxLayout({ style_class: '', vertical: true, reactive: true });
