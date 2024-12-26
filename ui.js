@@ -2,6 +2,7 @@ const St = imports.gi.St;
 const Gtk = imports.gi.Gtk;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
+const Lang = imports.lang;
 const PopupMenu = imports.ui.popupMenu;
 const Main = imports.ui.main;
 const Clutter = imports.gi.Clutter;
@@ -109,6 +110,7 @@ class SideBar {
     min_width = this.icon_size + (this.option_padding * 2);
     base_style = `padding-top: 7px; min-width: ${this.min_width}px; `; //`
     options = [];
+    inHoverState = false;
 
     constructor(applet) {
         this.applet = applet;
@@ -118,14 +120,15 @@ class SideBar {
             reactive: true            
         });
         this.actor.connect('enter-event', () => {
-            this.actor.style = this.base_style + "background-color: #000000; transition: background-color 0.3s ease-in-out;"   
-            this.options.forEach((option) => {
-                option.showLabel();
-            });
+            this.actor.style = this.base_style + "background-color: #000000; transition: background-color 0.3s ease-in-out;" 
+            this.inHoverState = true;
+
+            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 800, Lang.bind(this, this.showLabels));
         });
 
         this.actor.connect('leave-event', () => {
             this.actor.style = this.base_style;
+            this.inHoverState = false;
             this.options.forEach((option) => {
                 option.hideLabel();
             });
@@ -133,11 +136,22 @@ class SideBar {
 
         console.log(this.actor.style);
 
+        this.addOption(new Start(this));
         this.addOption(new Account(this));
         this.addOption(new Documents(this));
         this.addOption(new Pictures(this));
         this.addOption(new Settings(this));
         this.addOption(new Power(this));
+    }
+
+    showLabels() {
+        if (!this.inHoverState) {
+            return;
+        }
+
+        this.options.forEach((option) => {
+            option.showLabel();
+        });
     }
 
     addOption(option) { 
@@ -257,6 +271,12 @@ class PopupSidebarOption extends SidebarOption {
         this._popup_menu.toggle();
     }
 
+}
+
+class Start extends SidebarOption {
+    constructor(sidebar) {
+        super(sidebar, "START", "application-menu");
+    }
 }
 
 class Account extends PopupSidebarOption {
