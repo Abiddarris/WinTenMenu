@@ -164,13 +164,10 @@ class SidebarOption {
         this.actor.connect('button-release-event', this.on_release_event.bind(this));
         this.actor.connect('enter-event', () => {
             this.actor.style = this.base_container_style + "background-color: #222222; transition: background-color 0.3s ease-in-out;";
-            showLabel();
         });
 
         this.actor.connect('leave-event', () => {
             this.actor.style = this.base_container_style + "transition: background-color 0.3s ease-in-out;";
-            
-            hideLabel();
         });
 
         this.icon = new St.Icon({
