@@ -60,7 +60,8 @@ function createAppListUI(ui, applet, categories) {
                                       {sensitivity: "base", ignorePunctuation: true}));
     const scrollView = new St.ScrollView({
         width: ui.getMenuWidth(),
-        height: ui.getMenuHeight()
+        height: ui.getMenuHeight(),
+        style: "padding-top: 7px;"
     });
     const applications = new St.BoxLayout({ 
         vertical: true
