@@ -105,7 +105,7 @@ class SideBar {
 
     option_padding = 7;
     icon_size = 30;
-    min_width = this.icon_size + this.option_padding;
+    min_width = this.icon_size + (this.option_padding * 2);
     base_style = `padding-top: 7px; min-width: ${this.min_width}px; `; //`
     options = [];
 
