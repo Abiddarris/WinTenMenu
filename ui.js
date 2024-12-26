@@ -1,5 +1,6 @@
 const St = imports.gi.St;
 const Gtk = imports.gi.Gtk;
+const GLib = imports.gi.GLib;
 const PopupMenu = imports.ui.popupMenu;
 const Main = imports.ui.main;
 const Clutter = imports.gi.Clutter;
@@ -211,8 +212,12 @@ class Power extends SidebarOption {
         this._popup_menu = new PopupMenu.PopupMenu(this.actor);        
         this._popup_menu.actor.hide();
 
-        this._addMenuItem("Shutdown", "system-shutdown-symbolic");
-        this._addMenuItem("Restart", "system-restart-symbolic");
+        this._addMenuItem("Shutdown", "system-shutdown-symbolic", () => {
+            GLib.spawn_command_line_async("shutdown now");
+        });
+
+        this._addMenuItem("Restart", "system-restart-symbolic", () => {
+        });
 
         this.popupMenuBox = new St.BoxLayout({ style_class: '', vertical: true, reactive: true });
         this.popupMenuBox.add_actor(this._popup_menu.actor);
@@ -223,8 +228,9 @@ class Power extends SidebarOption {
                                                     x_align: St.Align.START, y_align: St.Align.MIDDLE,});
     }
 
-    _addMenuItem(label, iconName) {
+    _addMenuItem(label, iconName, action) {
         let menuItem = new PopupMenu.PopupIconMenuItem(label, iconName, St.IconType.SYMBOLIC);
+        menuItem.connect("activate", action);
 
         this._popup_menu.addMenuItem(menuItem);
     }
