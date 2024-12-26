@@ -1,6 +1,7 @@
 const St = imports.gi.St;
 const Gtk = imports.gi.Gtk;
 const GLib = imports.gi.GLib;
+const Gio = imports.gi.Gio;
 const PopupMenu = imports.ui.popupMenu;
 const Main = imports.ui.main;
 const Clutter = imports.gi.Clutter;
@@ -132,6 +133,7 @@ class SideBar {
 
         console.log(this.actor.style);
 
+        this.addOption(new Pictures(this));
         this.addOption(new Settings(this));
         this.addOption(new Power(this));
     }
@@ -201,6 +203,30 @@ class SidebarOption {
     hideLabel() {
         this.actor.remove_child(this.label);    
     }
+}
+
+class Folder extends SidebarOption {
+
+    constructor(sidebar, name, icon, path) {
+        super(sidebar, name, icon);
+
+        this.path = path;
+    }
+
+    on_release_event() {
+        const file = GLib.get_home_dir() + "/" + this.path;
+        GLib.spawn_command_line_async('xdg-open ' + file);
+
+        this.sidebar.applet.closeMenu();
+    }
+}
+
+class Pictures extends Folder {
+    
+    constructor(sidebar) {
+        super(sidebar, "Pictures", "folder-pictures", "Pictures");
+    }
+    
 }
 
 class Settings extends SidebarOption {
