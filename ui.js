@@ -211,6 +211,10 @@ class Power extends SidebarOption {
     attachPopupMenu(box) {
         this._popup_menu = new PopupMenu.PopupMenu(this.actor);        
         this._popup_menu.actor.hide();
+        
+        this._addMenuItem("Sleep", "sleep-symbolic", () => {
+            GLib.spawn_command_line_async("systemctl suspend");
+        });
 
         this._addMenuItem("Shutdown", "system-shutdown-symbolic", () => {
             GLib.spawn_command_line_async("shutdown now");
