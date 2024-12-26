@@ -2,19 +2,19 @@ const St = imports.gi.St;
 const Gtk = imports.gi.Gtk;
 const PopupMenu = imports.ui.popupMenu;
 const Main = imports.ui.main;
+const Clutter = imports.gi.Clutter;
 const {get_categories} = require('./app');
 
 function createUI(applet) {
-   const box = new St.BoxLayout({
-        vertical: false,
-        width: 300,
-        height: 700,
-    });
-
+    const box = new Clutter.Actor();
+    
     const sidebar = new SideBar(applet);
+    const appList = createAppListUI(applet, get_categories());
 
-    box.add_actor(sidebar.actor);
-    box.add_actor(createAppListUI(applet, get_categories()));
+    box.add_child(appList);
+    box.add_child(sidebar.actor);
+
+    appList.set_x(sidebar.min_width);
 
     sidebar.attachPopupMenu(box);
     
@@ -25,7 +25,9 @@ function createAppListUI(applet, categories) {
     const apps = _flattenCategories(categories)
     apps.sort((a, b) => a.get_name().localeCompare(b.get_name(), undefined,
                                       {sensitivity: "base", ignorePunctuation: true}));
-    const scrollView = new St.ScrollView();
+    const scrollView = new St.ScrollView({
+        style: "position: absolute; top: 80px; left: 20;"
+    });
     const applications = new St.BoxLayout({ 
         vertical: true,
     }); 
@@ -98,13 +100,14 @@ class SideBar {
 
     option_padding = 7;
     icon_size = 30;
+    min_width = this.icon_size + this.option_padding;
     options = [];
 
     constructor(applet) {
         this.applet = applet;
         this.actor = new St.BoxLayout({ 
             vertical: true,
-            style: `padding-top: 7px; min-width: ${this.icon_size + this.option_padding}px;`
+            style: `padding-top: 7px; min-width: ${this.min_width}px;`
         });
 
         console.log(this.actor.style);
@@ -188,7 +191,7 @@ class Power extends SidebarOption {
         this.popupMenuBox.height = 0;
         this.popupMenuBox.width = 0;
 
-        box.add(this.popupMenuBox, {expand: false, x_fill: false,
+        box.add_actor(this.popupMenuBox, {expand: false, x_fill: false,
                                                     x_align: St.Align.START, y_align: St.Align.MIDDLE,});
     }
 
