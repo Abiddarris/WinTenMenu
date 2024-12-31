@@ -189,6 +189,10 @@ class SideBar {
         this.onHeightChanged(ui.getMenuHeight());
     }
 
+    getSidebarExpandedWidth() {
+        return 17 * Display.getDisplaySize()[0] / 100;
+    }
+
 
     getSidebarOptionHeight() {
         return this.option_padding * 2 + this.icon_size;
@@ -199,7 +203,7 @@ class SideBar {
             return;
         }
         
-        this.actor.set_width(17 * Display.getDisplaySize()[0] / 100);
+        this.actor.set_width(this.getSidebarExpandedWidth());
         this.actor.style = this.base_style + "background-color: #000000; transition: background-color 0.3s ease-in-out;" 
 
         this.options.forEach((option) => {
@@ -308,6 +312,7 @@ class SidebarOption {
     }
 
     showLabel() {
+        this.actor.set_width(this.sidebar.getSidebarExpandedWidth());
         this.actor.add(this.label, {
                 y_fill: false,
                 y_align: St.Align.MIDDLE
@@ -315,6 +320,7 @@ class SidebarOption {
     }
 
     hideLabel() {
+        this.actor.set_width(-1);
         this.actor.remove_child(this.label);    
     }
 }
