@@ -10,8 +10,6 @@ const {get_categories} = require('./app');
 const Display = require('./display');
 
 class UI {
-    _menus = [];
-
     constructor(applet) {
         this.applet = applet;
     }
@@ -19,8 +17,11 @@ class UI {
     init() {
         this.menuManager = new PopupMenu.PopupMenuManager(this);
 
-        this.actor = new Clutter.Actor();
+        this.actor = new Clutter.Actor({
+            reactive: true
+        });
         this.actor.set_layout_manager(new Clutter.BinLayout());
+        this.actor.connect('button-release-event', this._onActorClicked.bind(this));
 
         this.sidebar = new SideBar(this, this.applet);
         this.appList = createAppListUI(this, this.applet, get_categories());
@@ -34,6 +35,10 @@ class UI {
         this.sidebar.attachPopupMenu(this.actor);
 
         this.sidebar.actor.set_height(this.getMenuHeight()); 
+    }
+
+    _onActorClicked() {
+        this.closeMenu();
     }
 
     getMenuHeight() {
@@ -121,6 +126,8 @@ class AppItemLayout {
     constructor(ui, applet, app) {
         this.applet = applet;
         this.app = app;
+        this.ui = ui;
+
         this.actor = new St.BoxLayout({
              reactive: true, 
              style: this.base_list_style
@@ -159,15 +166,16 @@ class AppItemLayout {
     }
 
     _onReleaseEvent(actor, event) {
-        if (ui.isMenuOpen()) {
+        if (this.ui.isMenuOpen()) {
             return Clutter.EVENT_PROPAGATE;
         }
-
 
         if (event.get_button() === 1) {
             this.app.open_new_window(-1);
             this.applet.closeMenu();
         }
+
+        return Clutter.EVENT_STOP;
     }
 
     _get_icon(app) {
@@ -348,7 +356,7 @@ class SidebarOption {
             return Clutter.EVENT_PROPAGATE;
         }
 
-        this.on_release_event();
+        return this.on_release_event();
     }
 
     on_release_event() {
@@ -409,7 +417,7 @@ class PopupSidebarOption extends SidebarOption {
         if (this._popup_menu.isOpen) {
             this.sidebar.ui.closeMenu();
 
-            return;
+            return Clutter.EVENT_STOP;
         }
         const monitor = Main.layoutManager.findMonitorForActor(this._popup_menu.actor);
         let [mx, my] = this.actor.get_transformed_position();
@@ -432,6 +440,8 @@ class PopupSidebarOption extends SidebarOption {
         this._popup_menu.actor.set_anchor_point(Math.round(cx - mx), Math.round(cy - my));
 
         this.sidebar.ui.showMenu(this._popup_menu);
+
+        return Clutter.EVENT_STOP;
     }
 
 }
@@ -479,6 +489,8 @@ class Folder extends SidebarOption {
         GLib.spawn_command_line_async('xdg-open ' + file);
 
         this.sidebar.applet.closeMenu();
+
+        return Clutter.EVENT_STOP;
     }
 }
 
@@ -508,6 +520,8 @@ class Settings extends SidebarOption {
     on_release_event() {
         GLib.spawn_command_line_async("cinnamon-settings");
         this.sidebar.applet.closeMenu();
+
+        return Clutter.EVENT_STOP;
     }
 }
 
