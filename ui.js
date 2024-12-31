@@ -98,7 +98,7 @@ function createAppListUI(ui, applet, categories) {
         vertical: true
     }); 
 
-    apps.forEach(app => applications.add(new AppItemLayout(applet, app).actor))
+    apps.forEach(app => applications.add(new AppItemLayout(ui, applet, app).actor))
 
     scrollView.add_actor(applications);
 
@@ -118,7 +118,7 @@ class AppItemLayout {
 
     base_list_style = "padding-left: 9px; padding-top: 9px; padding-bottom: 9px; ";
 
-    constructor(applet, app) {
+    constructor(ui, applet, app) {
         this.applet = applet;
         this.app = app;
         this.actor = new St.BoxLayout({
@@ -140,17 +140,30 @@ class AppItemLayout {
 
         this.actor.connect('button-release-event', this._onReleaseEvent.bind(this));
         this.actor.connect('enter-event', () => {
+            if (ui.isMenuOpen()) {
+                return Clutter.EVENT_PROPAGATE;
+            }
+
             // Change the background color when the mouse enters
             this.actor.style = this.base_list_style + "background-color: #222222; transition: background-color 0.3s ease-in-out;";
         });
 
         this.actor.connect('leave-event', () => {
+            if (ui.isMenuOpen()) {
+                return Clutter.EVENT_PROPAGATE;
+            }
+
             // Reset the background color when the mouse leaves
             this.actor.style = this.base_list_style + "transition: background-color 0.3s ease-in-out;";
         });
     }
 
     _onReleaseEvent(actor, event) {
+        if (ui.isMenuOpen()) {
+            return Clutter.EVENT_PROPAGATE;
+        }
+
+
         if (event.get_button() === 1) {
             this.app.open_new_window(-1);
             this.applet.closeMenu();
@@ -295,12 +308,20 @@ class SidebarOption {
             style: this.base_container_style
         });
 
-        this.actor.connect('button-release-event', this.on_release_event.bind(this));
+        this.actor.connect('button-release-event', this._on_release_event.bind(this));
         this.actor.connect('enter-event', () => {
+            if (this.sidebar.ui.isMenuOpen()) {
+                return Clutter.EVENT_PROPAGATE;
+            }
+
             this.actor.style = this.base_container_style + "background-color: #222222; transition: background-color 0.3s ease-in-out;";
         });
 
         this.actor.connect('leave-event', () => {
+            if (this.sidebar.ui.isMenuOpen()) {
+                return Clutter.EVENT_PROPAGATE;
+            }
+
             this.actor.style = this.base_container_style + "transition: background-color 0.3s ease-in-out;";
         });
 
@@ -320,6 +341,14 @@ class SidebarOption {
     }
 
     attachPopupMenu(box) {
+    }
+
+    _on_release_event() {
+        if (this.sidebar.ui.isMenuOpen()) {
+            return Clutter.EVENT_PROPAGATE;
+        }
+
+        this.on_release_event();
     }
 
     on_release_event() {
