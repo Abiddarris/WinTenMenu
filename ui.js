@@ -170,7 +170,6 @@ class SideBar {
         this.actor.set_layout_manager(new Clutter.BinLayout());
 
         this.actor.connect('enter-event', () => {
-            this.actor.style = this.base_style + "background-color: #000000; transition: background-color 0.3s ease-in-out;" 
             this.inHoverState = true;
 
             GLib.timeout_add(GLib.PRIORITY_DEFAULT, 800, Lang.bind(this, this.showLabels));
@@ -199,6 +198,9 @@ class SideBar {
         if (!this.inHoverState || this._locked) {
             return;
         }
+        
+        this.actor.set_width(17 * Display.getDisplaySize()[0] / 100);
+        this.actor.style = this.base_style + "background-color: #000000; transition: background-color 0.3s ease-in-out;" 
 
         this.options.forEach((option) => {
             option.showLabel();
@@ -210,6 +212,7 @@ class SideBar {
             return;
         }
 
+        this.actor.set_width(-1);
         this.actor.style = this.base_style;
 
         this.options.forEach((option) => {
@@ -387,6 +390,7 @@ class Start extends SidebarOption {
     constructor(sidebar) {
         super(sidebar, "START", "application-menu");
     }
+
 }
 
 class Account extends PopupSidebarOption {
