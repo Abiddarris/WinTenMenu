@@ -80,8 +80,12 @@ class UI {
         if (this._menu == undefined) {
             return;
         }
-        this._menu.close();
+
+        const menu = this._menu;
+
         this._menu = undefined;
+
+        menu.close();
     }
 
     isMenuOpen() {
@@ -320,6 +324,8 @@ class SideBar {
             return Clutter.EVENT_PROPAGATE;
         }
 
+        log('leave you baka');
+
         this.inHoverState = false;
 
         GLib.timeout_add(GLib.PRIORITY_DEFAULT, 800, Lang.bind(this, this.hideLabels));
@@ -341,14 +347,7 @@ class SidebarOption {
 
         this.actor.connect('button-release-event', this._on_release_event.bind(this));
         this.actor.connect('enter-event', this._enterEvent.bind(this));
-
-        this.actor.connect('leave-event', () => {
-            if (this.sidebar.ui.isMenuOpen()) {
-                return Clutter.EVENT_PROPAGATE;
-            }
-
-            this.actor.style = this.base_container_style + "transition: background-color 0.3s ease-in-out;";
-        });
+        this.actor.connect('leave-event', this._leaveEvent.bind(this));
 
         this.icon = new St.Icon({
             icon_name: icon_name,
@@ -385,6 +384,14 @@ class SidebarOption {
         }
 
         this.actor.style = this.base_container_style + "background-color: #222222; transition: background-color 0.3s ease-in-out;";
+    }
+
+    _leaveEvent() {
+        if (this.sidebar.ui.isMenuOpen()) {
+            return Clutter.EVENT_PROPAGATE;
+        }
+
+        this.actor.style = this.base_container_style + "transition: background-color 0.3s ease-in-out;";
     }
 
     on_release_event() {
@@ -437,8 +444,9 @@ class PopupSidebarOption extends SidebarOption {
         if (open) { 
             return;
         }
-
+        
         this.sidebar.unlockSidebar();
+        this._leaveEvent();
     }
 
     on_release_event() {
