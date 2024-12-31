@@ -292,7 +292,7 @@ class SideBar {
         const sidebarOptionHeight = this.getSidebarOptionHeight();
         
         for (let i = 0; i < this.bottomOptions.length; i++) {
-            this.bottomOptions[i].actor.set_y(height - sidebarOptionHeight * (i + 1));
+            this.bottomOptions[i].actor.set_y(height - sidebarOptionHeight * (i + 1) - 10);
         }
     }
 
