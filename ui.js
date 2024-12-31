@@ -18,7 +18,7 @@ class UI {
         this.actor = new Clutter.Actor();
         this.actor.set_layout_manager(new Clutter.BinLayout());
 
-        this.sidebar = new SideBar(this.applet);
+        this.sidebar = new SideBar(this, this.applet);
         this.appList = createAppListUI(this, this.applet, get_categories());
 
         this.actor.add_actor(this.appList);
@@ -44,6 +44,7 @@ class UI {
         const height = this.getMenuHeight();
 
         this.sidebar.actor.set_height(height); 
+        this.sidebar.onHeightChanged(height);
         this.appList.set_height(height);
     }
 
@@ -138,15 +139,19 @@ class SideBar {
     min_width = this.icon_size + (this.option_padding * 2);
     base_style = `padding-top: 7px; min-width: ${this.min_width}px; `; //`
     options = [];
+    bottomOptions = [];
     inHoverState = false;
 
-    constructor(applet) {
+    constructor(ui, applet) {
         this.applet = applet;
-        this.actor = new St.BoxLayout({ 
-            vertical: true,
-            style: this.base_style,
-            reactive: true            
+
+        this.actor = new St.Widget({
+            reactive: true,
+            style : this.base_style
         });
+        this.actor.set_height(ui.getMenuHeight());
+        this.actor.set_layout_manager(new Clutter.BinLayout());
+
         this.actor.connect('enter-event', () => {
             this.actor.style = this.base_style + "background-color: #000000; transition: background-color 0.3s ease-in-out;" 
             this.inHoverState = true;
@@ -155,21 +160,25 @@ class SideBar {
         });
 
         this.actor.connect('leave-event', () => {
-            this.actor.style = this.base_style;
             this.inHoverState = false;
-            this.options.forEach((option) => {
-                option.hideLabel();
-            });
+
+            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 800, Lang.bind(this, this.hideLabels));
         });
 
         console.log(this.actor.style);
 
         this.addOption(new Start(this));
-        this.addOption(new Account(this));
-        this.addOption(new Documents(this));
-        this.addOption(new Pictures(this));
-        this.addOption(new Settings(this));
-        this.addOption(new Power(this));
+
+        this.addBottomOption(new Power(this));
+        this.addBottomOption(new Settings(this));
+        this.addBottomOption(new Pictures(this));
+        this.addBottomOption(new Documents(this));
+        this.addBottomOption(new Account(this));
+        this.onHeightChanged(ui.getMenuHeight());
+    }
+
+    getSidebarOptionHeight() {
+        return this.option_padding * 2 + this.icon_size;
     }
 
     showLabels() {
@@ -182,15 +191,40 @@ class SideBar {
         });
     }
 
-    addOption(option) { 
-        this.actor.add(option.actor, {
-            x_fill: false
+    hideLabels() {
+        if (this.inHoverState) {
+            return;
+        }
+
+        this.actor.style = this.base_style;
+
+        this.options.forEach((option) => {
+                option.hideLabel();
         });
+    }
+
+    addOption(option) { 
+        this.actor.add_child(option.actor);
         this.options.push(option);
+
+        option.actor.set_y(7);
+    }
+
+    addBottomOption(option) {
+        this.addOption(option);
+        this.bottomOptions.push(option);
     }
 
     attachPopupMenu(box) {
         this.options.forEach(option => option.attachPopupMenu(box));
+    }
+
+    onHeightChanged(height) {
+        const sidebarOptionHeight = this.getSidebarOptionHeight();
+        
+        for (let i = 0; i < this.bottomOptions.length; i++) {
+            this.bottomOptions[i].actor.set_y(height - sidebarOptionHeight * (i + 1));
+        }
     }
 }
 
