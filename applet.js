@@ -15,6 +15,8 @@ class StartMenu extends Applet.TextIconApplet {
 
         this.menuManager = new PopupMenu.PopupMenuManager(this);
         this.menu = new Applet.AppletPopupMenu(this, this.orientation);
+        this.menu.connect('open-state-changed', this.onMenuClose.bind(this));
+
         this.menuManager.addMenu(this.menu);  
 
         this.ui = new Ui.UI(this);  
@@ -31,6 +33,12 @@ class StartMenu extends Applet.TextIconApplet {
 
     closeMenu() {
         this.menu.close();
+    }
+
+    onMenuClose(menu, open) {
+        if (!open) {
+            this.ui.closeMenus();
+        }
     }
 }
 

@@ -10,6 +10,8 @@ const {get_categories} = require('./app');
 const Display = require('./display');
 
 class UI {
+    _menus = [];
+
     constructor(applet) {
         this.applet = applet;
     }
@@ -54,6 +56,18 @@ class UI {
         const width = this.getMenuWidth();
  
         this.appList.set_width(width - this.sidebar.actor.get_width());
+    }
+
+    registerMenu(menu) {
+        this._menus.push(menu);
+    }
+
+    closeMenus() {
+        this._menus.forEach((menu) => {
+            if (menu.isOpen) {
+                menu.close();
+            }
+        });
     }
 }
 
@@ -142,7 +156,6 @@ class SideBar {
     base_style = `padding-top: 7px; min-width: ${this.min_width}px; `; //`
     options = [];
     bottomOptions = [];
-    menus = [];
     inHoverState = false;
 
     constructor(ui, applet) {
@@ -231,17 +244,6 @@ class SideBar {
         }
     }
 
-    registerMenu(menu) {
-        this.menus.push(menu);
-    }
-
-    closeMenus() {
-        this.menus.forEach((menu) => {
-            if (menu.isOpen) {
-                menu.close();
-            }
-        });
-    }
 }
 
 class SidebarOption {
@@ -309,7 +311,7 @@ class PopupSidebarOption extends SidebarOption {
         this._popup_menu = new PopupMenu.PopupMenu(this.actor);        
         this._popup_menu.actor.hide();
 
-        this.sidebar.registerMenu(this._popup_menu);
+        this.sidebar.ui.registerMenu(this._popup_menu);
 
         this.populatePopupMenu(this._popup_menu);
         
@@ -347,7 +349,7 @@ class PopupSidebarOption extends SidebarOption {
 
         let [cx, cy] = this.popupMenuBox.get_transformed_position();
         
-        this.sidebar.closeMenus();
+        this.sidebar.ui.closeMenus();
 
         this._popup_menu.actor.set_anchor_point(Math.round(cx - mx), Math.round(cy - my));
         this._popup_menu.toggle();
