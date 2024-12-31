@@ -372,7 +372,7 @@ class PopupSidebarOption extends SidebarOption {
         }
         const monitor = Main.layoutManager.findMonitorForActor(this._popup_menu.actor);
         let [mx, my] = this.actor.get_transformed_position();
-        my += 20;
+        my -= this._popup_menu.actor.height;
         
         if (mx > monitor.x + monitor.width - this._popup_menu.actor.width) {
             mx -= this._popup_menu.actor.width;
