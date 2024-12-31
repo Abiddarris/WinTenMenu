@@ -305,7 +305,7 @@ class PopupSidebarOption extends SidebarOption {
     }
 
     _addMenuItem(label, iconName, action) {
-        let menuItem = new PopupMenu.PopupIconMenuItem(label, iconName, St.IconType.SYMBOLIC);
+        let menuItem = new PopupMenu.PopupIconMenuItem(label, iconName, St.IconType.SYMBOLIC, {focusOnHover: false});
         menuItem.connect("activate", action);
 
         this._popup_menu.addMenuItem(menuItem);
