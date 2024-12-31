@@ -176,11 +176,7 @@ class SideBar {
             GLib.timeout_add(GLib.PRIORITY_DEFAULT, 800, Lang.bind(this, this.showLabels));
         });
 
-        this.actor.connect('leave-event', () => {
-            this.inHoverState = false;
-
-            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 800, Lang.bind(this, this.hideLabels));
-        });
+        this.actor.connect('leave-event', this._onLeaveEvent.bind(this));
 
         console.log(this.actor.style);
 
@@ -194,12 +190,13 @@ class SideBar {
         this.onHeightChanged(ui.getMenuHeight());
     }
 
+
     getSidebarOptionHeight() {
         return this.option_padding * 2 + this.icon_size;
     }
 
     showLabels() {
-        if (!this.inHoverState) {
+        if (!this.inHoverState || this._locked) {
             return;
         }
 
@@ -209,7 +206,7 @@ class SideBar {
     }
 
     hideLabels() {
-        if (this.inHoverState) {
+        if (this.inHoverState || this._locked) {
             return;
         }
 
@@ -218,6 +215,19 @@ class SideBar {
         this.options.forEach((option) => {
                 option.hideLabel();
         });
+    }
+
+    lockSidebar() {
+        this._locked = true;
+    }
+
+    unlockSidebar() {
+        if (!this._locked) {
+            return;
+        }
+
+        this._locked = false;
+        this._onLeaveEvent();
     }
 
     addOption(option) { 
@@ -244,6 +254,11 @@ class SideBar {
         }
     }
 
+    _onLeaveEvent() {
+        this.inHoverState = false;
+
+        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 800, Lang.bind(this, this.hideLabels));
+    }
 }
 
 class SidebarOption {
@@ -310,6 +325,7 @@ class PopupSidebarOption extends SidebarOption {
     attachPopupMenu(box) {
         this._popup_menu = new PopupMenu.PopupMenu(this.actor);        
         this._popup_menu.actor.hide();
+        this._popup_menu.connect('open-state-changed', this._popupMenuStateChanged.bind(this));
 
         this.sidebar.ui.registerMenu(this._popup_menu);
 
@@ -331,9 +347,18 @@ class PopupSidebarOption extends SidebarOption {
         this._popup_menu.addMenuItem(menuItem);
     }
 
+    _popupMenuStateChanged(menu, open) {
+        if (open) { 
+            return;
+        }
+
+        this.sidebar.unlockSidebar();
+    }
+
     on_release_event() {
         if (this._popup_menu.isOpen) {
             this._popup_menu.toggle();
+
             return;
         }
         const monitor = Main.layoutManager.findMonitorForActor(this._popup_menu.actor);
@@ -350,6 +375,7 @@ class PopupSidebarOption extends SidebarOption {
         let [cx, cy] = this.popupMenuBox.get_transformed_position();
         
         this.sidebar.ui.closeMenus();
+        this.sidebar.lockSidebar();
 
         this._popup_menu.actor.set_anchor_point(Math.round(cx - mx), Math.round(cy - my));
         this._popup_menu.toggle();
