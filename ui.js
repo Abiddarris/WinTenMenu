@@ -58,17 +58,31 @@ class UI {
         this.appList.set_width(width - this.sidebar.actor.get_width());
     }
 
-    registerMenu(menu) {
-        this._menus.push(menu);
+    showMenu(menu) {
+        if (menu.isOpen) {
+            return;
+        }
+
+        if (this.isMenuOpen()) {
+            this.closeMenu();
+        }
+
+        this._menu = menu;
+        this._menu.open(true);
     }
 
-    closeMenus() {
-        this._menus.forEach((menu) => {
-            if (menu.isOpen) {
-                menu.close();
-            }
-        });
+    closeMenu() {
+        if (this._menu == undefined) {
+            return;
+        }
+        this._menu.close();
+        this._menu = undefined;
     }
+
+    isMenuOpen() {
+        return this._menu != undefined;
+    }
+
 }
 
 function createAppListUI(ui, applet, categories) {
@@ -336,8 +350,6 @@ class PopupSidebarOption extends SidebarOption {
         this._popup_menu.actor.hide();
         this._popup_menu.connect('open-state-changed', this._popupMenuStateChanged.bind(this));
 
-        this.sidebar.ui.registerMenu(this._popup_menu);
-
         this.populatePopupMenu(this._popup_menu);
         
         this.popupMenuBox = new St.BoxLayout({ style_class: '', vertical: true, reactive: true });
@@ -366,7 +378,7 @@ class PopupSidebarOption extends SidebarOption {
 
     on_release_event() {
         if (this._popup_menu.isOpen) {
-            this._popup_menu.toggle();
+            this.sidebar.ui.closeMenu();
 
             return;
         }
@@ -385,11 +397,12 @@ class PopupSidebarOption extends SidebarOption {
 
         let [cx, cy] = this.popupMenuBox.get_transformed_position();
         
-        this.sidebar.ui.closeMenus();
+        this.sidebar.ui.closeMenu();
         this.sidebar.lockSidebar();
 
         this._popup_menu.actor.set_anchor_point(Math.round(cx - mx), Math.round(cy - my));
-        this._popup_menu.toggle();
+
+        this.sidebar.ui.showMenu(this._popup_menu);
     }
 
 }

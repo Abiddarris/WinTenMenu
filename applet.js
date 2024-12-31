@@ -37,7 +37,7 @@ class StartMenu extends Applet.TextIconApplet {
 
     onMenuClose(menu, open) {
         if (!open) {
-            this.ui.closeMenus();
+            this.ui.closeMenu();
         }
     }
 }
