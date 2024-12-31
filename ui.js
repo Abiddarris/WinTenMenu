@@ -15,6 +15,8 @@ class UI {
     }
 
     init() {
+        this.menuManager = new PopupMenu.PopupMenuManager(this);
+
         this.actor = new Clutter.Actor();
         this.actor.set_layout_manager(new Clutter.BinLayout());
 
@@ -140,10 +142,12 @@ class SideBar {
     base_style = `padding-top: 7px; min-width: ${this.min_width}px; `; //`
     options = [];
     bottomOptions = [];
+    menus = [];
     inHoverState = false;
 
     constructor(ui, applet) {
         this.applet = applet;
+        this.ui = ui;
 
         this.actor = new St.Widget({
             reactive: true,
@@ -226,6 +230,18 @@ class SideBar {
             this.bottomOptions[i].actor.set_y(height - sidebarOptionHeight * (i + 1));
         }
     }
+
+    registerMenu(menu) {
+        this.menus.push(menu);
+    }
+
+    closeMenus() {
+        this.menus.forEach((menu) => {
+            if (menu.isOpen) {
+                menu.close();
+            }
+        });
+    }
 }
 
 class SidebarOption {
@@ -293,6 +309,8 @@ class PopupSidebarOption extends SidebarOption {
         this._popup_menu = new PopupMenu.PopupMenu(this.actor);        
         this._popup_menu.actor.hide();
 
+        this.sidebar.registerMenu(this._popup_menu);
+
         this.populatePopupMenu(this._popup_menu);
         
         this.popupMenuBox = new St.BoxLayout({ style_class: '', vertical: true, reactive: true });
@@ -329,6 +347,8 @@ class PopupSidebarOption extends SidebarOption {
 
         let [cx, cy] = this.popupMenuBox.get_transformed_position();
         
+        this.sidebar.closeMenus();
+
         this._popup_menu.actor.set_anchor_point(Math.round(cx - mx), Math.round(cy - my));
         this._popup_menu.toggle();
     }
