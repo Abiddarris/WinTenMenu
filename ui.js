@@ -32,6 +32,7 @@ class UI {
         this.actor.add_actor(this.sidebar.actor);
 
         this.appUI.actor.set_x(this.sidebar.min_width);
+        this.appUI.attachPopupMenu(this.actor);
 
         this.sidebar.actor.set_x(0);
         this.sidebar.attachPopupMenu(this.actor);
