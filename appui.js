@@ -261,7 +261,7 @@ class ApplicationUI extends AppUIItem {
         });
 
         const clutterText = this.label.get_clutter_text();
-        clutterText.set_markup(app.get_name());
+        clutterText.set_text(app.get_name());
 
         this.actor.add(this._get_icon(app));
         this.actor.add(this.label, {
