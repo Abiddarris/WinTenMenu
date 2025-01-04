@@ -11,18 +11,19 @@ WinTenMenu is a Cinnamon desktop applet that reassamble Windows 10 Start Menu
 ### Installation
 
 1. Clone this repository using Git:
+
    ```bash
    git clone https://github.com/Abiddarris/WinTenMenu.git
    ```
-2. Then go to directory
+3. Then go to directory
    ```bash
    cd WinTenMenu
    ```
-3. Run Install Script
+4. Run Install Script
    ```bash
    ./install.sh
    ```
-4. Open **Cinnamon Settings** -> **Applets**, and click on the "Add Applet" button. Find **WinTenMenu** in the list and add it to your panel.
+5. Open **Cinnamon Settings** -> **Applets**, and click on the "Add Applet" button. Find **WinTenMenu** in the list and add it to your panel.
 
 ## Screenshots
 
