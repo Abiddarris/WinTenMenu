@@ -517,16 +517,16 @@ class Start extends SidebarOption {
 class Account extends PopupSidebarOption {
 
     constructor(sidebar) {
-        super(sidebar, GLib.get_user_name(), "user_icon");
+        super(sidebar, GLib.get_user_name(), "avatar-default");
     }
 
     populatePopupMenu(menu) {
-        this._addMenuItem("Change account settings", "user-identity", () => {
+        this._addMenuItem("Change account settings", "system-users", () => {
             GLib.spawn_command_line_async("cinnamon-settings user")
             this.sidebar.applet.closeMenu();
         });
                 
-        this._addMenuItem("Lock", "lock", () => {
+        this._addMenuItem("Lock", "changes-prevent", () => {
             GLib.spawn_command_line_async("cinnamon-screensaver-command --lock");
             this.sidebar.applet.closeMenu();
         });
@@ -575,7 +575,7 @@ class Documents extends Folder {
 class Settings extends SidebarOption {
 
     constructor(sidebar) {
-        super(sidebar, "Settings", "system-settings");
+        super(sidebar, "Settings", "preferences-system");
     }
 
     on_release_event() {
@@ -589,19 +589,19 @@ class Settings extends SidebarOption {
 class Power extends PopupSidebarOption {
 
     constructor(sidebar) {
-        super(sidebar, "Power", "system-shutdown-symbolic");
+        super(sidebar, "Power", "system-shutdown");
     }
 
     populatePopupMenu(menu) {
-        this._addMenuItem("Sleep", "sleep-symbolic", () => {
+        this._addMenuItem("Sleep", "system-suspend", () => {
             GLib.spawn_command_line_async("systemctl suspend");
         });
 
-        this._addMenuItem("Shutdown", "system-shutdown-symbolic", () => {
+        this._addMenuItem("Shutdown", "system-shutdown", () => {
             GLib.spawn_command_line_async("shutdown now");
         });
 
-        this._addMenuItem("Restart", "system-restart-symbolic", () => {
+        this._addMenuItem("Restart", "system-reboot", () => {
             GLib.spawn_command_line_async("reboot");
         });
  
