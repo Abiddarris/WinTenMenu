@@ -200,6 +200,7 @@ class SideBar {
     options = [];
     bottomOptions = [];
     inHoverState = false;
+    _ignoreEnterEventUntilLeaveEventFired = false;
 
     constructor(ui, applet) {
         this.applet = applet;
@@ -215,8 +216,6 @@ class SideBar {
         this.actor.connect('enter-event', this._enterEvent.bind(this));
         this.actor.connect('leave-event', this._onLeaveEvent.bind(this));
         this.actor.connect('button-release-event', this._onReleaseEvent.bind(this));
-
-        console.log(this.actor.style);
 
         this.addOption(new Start(this));
 
@@ -300,8 +299,27 @@ class SideBar {
         }
     }
 
-    _enterEvent() {
-        if (this.ui.isMenuOpen()) {
+    toggle() {
+        if (this.inHoverState) {
+            this.inHoverState = false;
+            this.hideLabels();
+            return;
+        }
+
+        this.inHoverState = true;
+        this.showLabels();
+    }
+
+    ignoreEnterEventUntilLeaveEventFired() {
+        this._ignoreEnterEventUntilLeaveEventFired = true;
+    }
+
+    _enterEvent(actor, event) {
+        if (this.actor.contains(event.get_related())) {
+            return;
+        }
+
+        if (this.ui.isMenuOpen() || this._ignoreEnterEventUntilLeaveEventFired) {
             return Clutter.EVENT_PROPAGATE;
         }
         this.inHoverState = true;
@@ -319,14 +337,17 @@ class SideBar {
 
     }
 
-    _onLeaveEvent() {
+    _onLeaveEvent(actor, event) {
+        if (this.actor.contains(event.get_related())) {
+            return;
+        }
+
         if (this.ui.isMenuOpen()) {
             return Clutter.EVENT_PROPAGATE;
         }
 
-        log('leave you baka');
-
         this.inHoverState = false;
+        this._ignoreEnterEventUntilLeaveEventFired = false;
 
         GLib.timeout_add(GLib.PRIORITY_DEFAULT, 800, Lang.bind(this, this.hideLabels));
     }
@@ -386,7 +407,7 @@ class SidebarOption {
         this.actor.style = this.base_container_style + "background-color: #222222; transition: background-color 0.3s ease-in-out;";
     }
 
-    _leaveEvent() {
+    _leaveEvent(actor, event) {
         if (this.sidebar.ui.isMenuOpen()) {
             return Clutter.EVENT_PROPAGATE;
         }
@@ -487,6 +508,10 @@ class Start extends SidebarOption {
         super(sidebar, "START", "application-menu");
     }
 
+    on_release_event() {
+        this.sidebar.ignoreEnterEventUntilLeaveEventFired();
+        this.sidebar.toggle();
+    }
 }
 
 class Account extends PopupSidebarOption {
