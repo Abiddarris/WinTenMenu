@@ -1,23 +1,25 @@
 const St = imports.gi.St;
+const Clutter = imports.gi.Clutter;
 
-function createAppListUI(ui, applet, categories) {
-    const apps = _flattenCategories(categories)
-    apps.sort((a, b) => a.get_name().localeCompare(b.get_name(), undefined,
-                                      {sensitivity: "base", ignorePunctuation: true}));
-    const scrollView = new St.ScrollView({
-        width: ui.getMenuWidth(),
-        height: ui.getMenuHeight(),
-        style: "padding-top: 7px;"
-    });
-    const applications = new St.BoxLayout({ 
-        vertical: true
-    }); 
+class AppUI {
+    constructor(ui, categories) {
+        const apps = _flattenCategories(categories)
+        apps.sort((a, b) => a.get_name().localeCompare(b.get_name(), undefined,
+                                          {sensitivity: "base", ignorePunctuation: true}));
+        this.actor = new St.ScrollView({
+            width: ui.getMenuWidth(),
+            height: ui.getMenuHeight(),
+            style: "padding-top: 7px;"
+        });
 
-    apps.forEach(app => applications.add(new AppItemLayout(ui, applet, app).actor))
+        const applications = new St.BoxLayout({ 
+            vertical: true
+        }); 
 
-    scrollView.add_actor(applications);
+        apps.forEach(app => applications.add(new AppItemLayout(ui, ui.applet, app).actor))
 
-    return scrollView;
+        this.actor.add_actor(applications);
+    }
 }
 
 function _flattenCategories(categories) {

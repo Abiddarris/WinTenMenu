@@ -11,6 +11,7 @@ const Display = require('./display');
 const AppUI = require('./appui');
 
 class UI {
+
     constructor(applet) {
         this.applet = applet;
     }
@@ -25,12 +26,12 @@ class UI {
         this.actor.connect('button-release-event', this._onActorClicked.bind(this));
 
         this.sidebar = new SideBar(this, this.applet);
-        this.appList = AppUI.createAppListUI(this, this.applet, get_categories());
+        this.appUI = new AppUI.AppUI(this, get_categories());
 
-        this.actor.add_actor(this.appList);
+        this.actor.add_actor(this.appUI.actor);
         this.actor.add_actor(this.sidebar.actor);
 
-        this.appList.set_x(this.sidebar.min_width);
+        this.appUI.actor.set_x(this.sidebar.min_width);
 
         this.sidebar.actor.set_x(0);
         this.sidebar.attachPopupMenu(this.actor);
@@ -55,13 +56,14 @@ class UI {
 
         this.sidebar.actor.set_height(height); 
         this.sidebar.onHeightChanged(height);
-        this.appList.set_height(height);
+
+        this.appUI.actor.set_height(height);
     }
 
     menuWidthChanged() {
         const width = this.getMenuWidth();
  
-        this.appList.set_width(width - this.sidebar.actor.get_width());
+        this.appUI.actor.set_width(width - this.sidebar.actor.get_width());
     }
 
     showMenu(menu) {
