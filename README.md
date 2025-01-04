@@ -1,4 +1,4 @@
-![Screenshot from 2025-01-04 19-47-57](https://github.com/user-attachments/assets/1725f586-3a03-41fc-8b4c-492fba4aa2b2)# Cinnamon Applet - WinTenMenu
+# Cinnamon Applet - WinTenMenu
 
 WinTenMenu is a Cinnamon desktop applet that reassamble Windows 10 Start Menu
 
