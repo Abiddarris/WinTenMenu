@@ -186,6 +186,7 @@ class SideBar {
 
     lockSidebar() {
         this._locked = true;
+        this._onEnterStateWhenLocked = this._actuallyOnEnter;
     }
 
     unlockSidebar() {
@@ -194,7 +195,16 @@ class SideBar {
         }
 
         this._locked = false;
-        this._onLeaveEvent();
+
+        if (this._actuallyOnEnter == this._onEnterStateWhenLocked) {
+            return;
+        }
+
+        if (this.actuallyOnEnter) {
+            this._enterEvent();
+        } else {
+            this._onLeaveEvent();
+        }
     }
 
     addOption(option) { 
@@ -237,6 +247,8 @@ class SideBar {
     }
 
     _enterEvent(actor, event) {
+        this._actuallyOnEnter = true;
+
         if (this.actor.contains(event.get_related())) {
             return;
         }
@@ -250,6 +262,8 @@ class SideBar {
     }
 
     _onReleaseEvent() {
+         this._actuallyOnEnter = false;
+
          if (this.ui.isMenuOpen()) {
             this.ui.closeMenu();
             this._enterEvent();
