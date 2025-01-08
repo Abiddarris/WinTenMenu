@@ -142,12 +142,10 @@ class AppUI {
         this.ui.closeMenu();
     }
 
-    showMenu(item) {
+    showMenu(item, mx, my) {
         this.item = item;
 
         const monitor = Main.layoutManager.findMonitorForActor(this.popupMenu.actor);
-        let [mx, my] = item.actor.get_transformed_position();
-        my -= this.popupMenu.actor.height / 2;
        
         if (mx > monitor.x + monitor.width - this.popupMenu.actor.width) {
             mx -= this.popupMenu.actor.width;
@@ -281,7 +279,9 @@ class ApplicationUI extends AppUIItem {
             this.app.open_new_window(-1);
             this.ui.applet.closeMenu();
         } else if (event.get_button() === Clutter.BUTTON_SECONDARY) {
-            this.ui.appUI.showMenu(this);
+            let x, y;
+            [x, y] = event.get_coords();
+            this.ui.appUI.showMenu(this, x, y);
         }
 
         return Clutter.EVENT_STOP;
