@@ -16,6 +16,11 @@
         "step" : 0.1,
         "units" : "%",
         "description" : "Menu Height"
+    },
+    "menu-shortcut": {
+        "type":"keybinding",
+        "description":"Shortcut to open or close the menu",
+        "default":"Super_L::Super_R"
     }
 }
 

@@ -30,4 +30,6 @@ function loadSettings(applet, metadata, instanceId) {
                        "menuHeight",
                        Lang.bind(applet.ui, applet.ui.menuHeightChanged),
                        null);
+    applet.settings.bindProperty(BindingDirection.IN, "menu-shortcut", "menuShortcut", applet.onShortcutChanged.bind(applet), null);
+    applet.onShortcutChanged();
 }

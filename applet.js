@@ -15,6 +15,7 @@
  */
 const Applet = imports.ui.applet;
 const PopupMenu = imports.ui.popupMenu;
+const Main = imports.ui.main;
 const St = imports.gi.St;
 const Ui = require('./ui');
 const Settings = require('./settings');
@@ -35,11 +36,20 @@ class StartMenu extends Applet.TextIconApplet {
         this.menuManager.addMenu(this.menu);  
 
         this.ui = new Ui.UI(this);  
-
+        
         Settings.loadSettings(this, metadata, instanceId);
 
         this.ui.init();
         this.menu.addActor(this.ui.actor);
+    }
+
+    onShortcutChanged() {
+        console.log(this.preferences);
+        Main.keybindingManager.addHotKey("menu-shortcut-" + this.instance_id, this.preferences.menuShortcut, () => {                              
+            if (Main.overview.visible || Main.expo.visible) return;
+
+            this.on_applet_clicked();
+        });
     }
 
     on_applet_clicked() {
