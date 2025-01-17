@@ -17,6 +17,7 @@ const Applet = imports.ui.applet;
 const PopupMenu = imports.ui.popupMenu;
 const Main = imports.ui.main;
 const St = imports.gi.St;
+const Cogl = imports.gi.Cogl;
 const Ui = require('./ui');
 const Settings = require('./settings');
 

@@ -25,6 +25,7 @@ const {spawnCommandLine} = imports.misc.util;
 class AppUI {
     constructor(ui, categories) {
         this.ui = ui;
+        this.categoryUIs = new Map();
         this.actor = new St.ScrollView({
             width: ui.getMenuWidth(),
             height: ui.getMenuHeight(),
@@ -95,7 +96,10 @@ class AppUI {
                 return key.localeCompare(key2);
             })
             .forEach(([key, apps]) => {
-                this.applications.add(new CategoryUI(ui, key).actor);
+                const categoryUI = new CategoryUI(ui, key);
+                this.categoryUIs.set(key, categoryUI);
+
+                this.applications.add(categoryUI.actor);
                 
                 apps.forEach(app => this.applications.add(new ApplicationUI(ui, app).actor));
             });
@@ -244,6 +248,13 @@ class CategoryUI extends AppUIItem {
             y_fill: false,
             y_align: St.Align.MIDDLE
         });
+    }
+
+    onReleaseEvent(actor, event) {
+        this.ui.appUI.actor.hide();
+
+        this.ui.categoryUI.onResize();
+        this.ui.categoryUI.actor.show();
     }
 }
 

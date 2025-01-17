@@ -24,6 +24,7 @@ const Clutter = imports.gi.Clutter;
 const {get_categories} = require('./app');
 const Display = require('./display');
 const AppUI = require('./appui');
+const CategoryUI = require('./categoryui');
 
 class UI {
 
@@ -37,12 +38,15 @@ class UI {
         this.actor = new Clutter.Actor({
             reactive: true
         });
+        this.actor.min_width = this.getMenuWidth();
         this.actor.set_layout_manager(new Clutter.BinLayout());
         this.actor.connect('button-release-event', this._onActorClicked.bind(this));
 
         this.sidebar = new SideBar(this, this.applet);
         this.appUI = new AppUI.AppUI(this, get_categories());
+        this.categoryUI = new CategoryUI.CategoryUI(this);
 
+        this.actor.add_actor(this.categoryUI.actor);
         this.actor.add_actor(this.appUI.actor);
         this.actor.add_actor(this.sidebar.actor);
 
@@ -79,7 +83,10 @@ class UI {
     menuWidthChanged() {
         const width = this.getMenuWidth();
  
+        this.actor.min_width = width;
         this.appUI.actor.set_width(width - this.sidebar.actor.get_width());
+
+        this.categoryUI.onResize();
     }
 
     showMenu(menu) {
