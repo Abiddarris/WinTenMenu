@@ -56,8 +56,11 @@ class ItemLayout {
         this.box.connect('enter-event', this._enterEvent.bind(this));
         this.box.connect('leave-event', this._onLeaveEvent.bind(this));
 
-        this.label = new St.Label();
-
+        if (!this._isEnabled()) {        
+            this.label = new St.Label({style : "color: #A0A0A0;"});
+        } else {
+            this.label = new St.Label();            
+        }
         const clutterText = this.label.get_clutter_text();
         clutterText.set_text(categoryName);
 
