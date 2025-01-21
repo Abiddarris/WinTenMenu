@@ -65,7 +65,14 @@ class ItemLayout {
         this.box.add_actor(this.label);
     }
 
+    _isEnabled() {
+        return this.ui.appUI.categoryUIs.has(this.categoryName);
+    }
+
     _enterEvent() {
+        if (!this._isEnabled()) {
+            return;
+        }
         if (this.ui.isMenuOpen()) {
             return Clutter.EVENT_PROPAGATE;
         }
@@ -74,6 +81,9 @@ class ItemLayout {
     }
 
     _onReleaseEvent(actor, event) {
+        if (!this._isEnabled()) {
+            return;
+        }
         if (this.ui.isMenuOpen()) {
             this.ui.closeMenu();
             this._enterEvent();
@@ -87,6 +97,9 @@ class ItemLayout {
     }
 
     _onLeaveEvent() {
+        if (!this._isEnabled()) {
+            return;
+        }
         if (this.ui.isMenuOpen()) {
             return Clutter.EVENT_PROPAGATE;
         }
