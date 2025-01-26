@@ -20,6 +20,7 @@ const Main = imports.ui.main;
 const {getUserDesktopDir, changeModeGFile} = imports.misc.fileUtils;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
+const Color = require('./color');
 const {spawnCommandLine} = imports.misc.util;
 
 class AppUI {
@@ -205,7 +206,7 @@ class AppUIItem {
             return Clutter.EVENT_PROPAGATE;
         }
 
-       this.actor.style = this.base_list_style + "background-color: #222222; transition: background-color 0.3s ease-in-out;";
+       this.actor.style = this.base_list_style + `background-color: ${Color.getHoveredColor(this.ui.applet).toCSSColor()}; transition: background-color 0.3s ease-in-out;`;
     }
 
     _onReleaseEvent(actor, event) {

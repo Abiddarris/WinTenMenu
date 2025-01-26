@@ -1,5 +1,6 @@
 const St = imports.gi.St;
 const Clutter = imports.gi.Clutter;
+const Color = require('./color');
 
 class CategoryUI {
     constructor(ui) {
@@ -80,7 +81,7 @@ class ItemLayout {
             return Clutter.EVENT_PROPAGATE;
         }
 
-       this.box.style = this.base_style + "background-color: #222222; transition: background-color 0.3s ease-in-out;";
+       this.box.style = this.base_style + `background-color: ${Color.getHoveredColor(this.ui.applet).toCSSColor()}; transition: background-color 0.3s ease-in-out;`;
     }
 
     _onReleaseEvent(actor, event) {

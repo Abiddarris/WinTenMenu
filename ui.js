@@ -349,7 +349,8 @@ class SidebarOption {
             return Clutter.EVENT_PROPAGATE;
         }
 
-        this.actor.style = this.base_container_style + "background-color: #222222; transition: background-color 0.3s ease-in-out;";
+        this.actor.style = this.base_container_style + 
+            `background-color: ${Color.getHoveredColor(this.sidebar.ui.applet).toCSSColor()}; transition: background-color 0.3s ease-in-out;`;
     }
 
     _leaveEvent(actor, event) {
