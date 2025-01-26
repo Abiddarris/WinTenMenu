@@ -6,9 +6,22 @@ function getBackgroundColor(applet) {
 
 function getHoveredColor(applet) {
     const color = getBackgroundColor(applet);
-    _adjustLightness(color, -0.1);
+    _adjustLightness(color, 0.1 * (_isDarkMode(color) ? 1 : -1));
     
     return color;
+}
+
+function _isDarkMode(color) {
+    const r = _applyGammaCorrection(color.r / 255);
+    const g = _applyGammaCorrection(color.g / 255);
+    const b = _applyGammaCorrection(color.b / 255);
+    
+    const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    return luminance < 0.5;
+}
+
+function _applyGammaCorrection(c) {
+    return c <= 0.03928 ? (c / 12.92) : Math.pow((c + 0.055) / 1.055, 2.4);
 }
 
 function _adjustLightness(color, factor) {
