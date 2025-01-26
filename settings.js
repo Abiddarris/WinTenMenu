@@ -31,5 +31,8 @@ function loadSettings(applet, metadata, instanceId) {
                        Lang.bind(applet.ui, applet.ui.menuHeightChanged),
                        null);
     applet.settings.bindProperty(BindingDirection.IN, "menu-shortcut", "menuShortcut", applet.onShortcutChanged.bind(applet), null);
+    applet.settings.bindProperty(BindingDirection.IN, "custom-start-menu-color", "customStartMenuColor", applet.onStartMenuColorChanged.bind(applet), null);
+    applet.settings.bindProperty(BindingDirection.IN, "start-menu-color", "startMenuColor", applet.onStartMenuColorChanged.bind(applet), null);    
+
     applet.onShortcutChanged();
 }

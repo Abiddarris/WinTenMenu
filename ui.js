@@ -25,6 +25,7 @@ const {get_categories} = require('./app');
 const Display = require('./display');
 const AppUI = require('./appui');
 const CategoryUI = require('./categoryui');
+const Color = require('./color');
 
 class UI {
 
@@ -171,7 +172,8 @@ class SideBar {
         }
         
         this.actor.set_width(this.getSidebarExpandedWidth());
-        this.actor.style = this.base_style + "background-color: #000000; transition: background-color 0.3s ease-in-out;" 
+        this.actor.style = this.base_style + 
+            `background-color: ${Color.getBackgroundColor(this.ui.applet).toCSSColor()}; transition: background-color 0.3s ease-in-out;` 
 
         this.options.forEach((option) => {
             option.showLabel();

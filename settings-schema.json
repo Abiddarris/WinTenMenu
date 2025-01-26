@@ -21,6 +21,17 @@
         "type":"keybinding",
         "description":"Shortcut to open or close the menu",
         "default":"Super_L::Super_R"
+    },
+    "custom-start-menu-color": {
+        "type":"switch",
+        "default":"false",
+        "description":"Use custom start menu color"
+    },
+    "start-menu-color": {
+        "type":"colorchooser",
+        "description":"Start menu's background color",
+        "default":"rgb(255, 255, 255)",
+        "dependency":"custom-start-menu-color"
     }
 }
 

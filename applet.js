@@ -20,6 +20,7 @@ const St = imports.gi.St;
 const Cogl = imports.gi.Cogl;
 const Ui = require('./ui');
 const Settings = require('./settings');
+const Color = require('./color');
 
 class StartMenu extends Applet.TextIconApplet {
 
@@ -42,6 +43,12 @@ class StartMenu extends Applet.TextIconApplet {
 
         this.ui.init();
         this.menu.addActor(this.ui.actor);
+
+        this.onStartMenuColorChanged();
+    }
+
+    onStartMenuColorChanged() {
+        this.menu.box.style = `background-color: ${Color.getBackgroundColor(this).toCSSColor()}`;
     }
 
     onShortcutChanged() {
