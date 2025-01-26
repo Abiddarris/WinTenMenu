@@ -239,7 +239,7 @@ class CategoryUI extends AppUIItem {
         super(ui);
 
         this.label = new St.Label({
-            style: "padding-left: 7px"
+            style: `padding-left: 7px; color: ${Color.getTextColor(this.ui.applet).toCSSColor()}`
         });
 
         const clutterText = this.label.get_clutter_text();
@@ -267,7 +267,7 @@ class ApplicationUI extends AppUIItem {
         this.app = app;
 
         this.label = new St.Label({
-            style: "padding-left: 7px"
+            style: `padding-left: 7px; color: ${Color.getTextColor(this.ui.applet).toCSSColor()}`
         });
 
         const clutterText = this.label.get_clutter_text();

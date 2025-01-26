@@ -56,12 +56,9 @@ class ItemLayout {
         this.box.connect('button-release-event', this._onReleaseEvent.bind(this));
         this.box.connect('enter-event', this._enterEvent.bind(this));
         this.box.connect('leave-event', this._onLeaveEvent.bind(this));
-
-        if (!this._isEnabled()) {        
-            this.label = new St.Label({style : "color: #A0A0A0;"});
-        } else {
-            this.label = new St.Label();            
-        }
+       
+        this.label = new St.Label({style : `color: ${this._isEnabled() ? Color.getTextColor(this.ui.applet).toCSSColor() : "#A0A0A0"};`});
+        
         const clutterText = this.label.get_clutter_text();
         clutterText.set_text(categoryName);
 

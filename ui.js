@@ -321,7 +321,7 @@ class SidebarOption {
         });
 
         this.label = new St.Label({
-            style: "padding-left: 7px"
+            style: `padding-left: 7px; color: ${Color.getTextColor(this.sidebar.ui.applet).toCSSColor()}`
         });
 
         const clutterText = this.label.get_clutter_text();

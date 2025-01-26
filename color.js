@@ -11,6 +11,15 @@ function getHoveredColor(applet) {
     return color;
 }
 
+function getTextColor(applet) {
+    const c = (isDarkMode(applet) ? 1 : 0) * 255;
+    return new Color(c, c, c, 255);
+}
+
+function isDarkMode(applet) {
+    return _isDarkMode(getBackgroundColor(applet));
+}
+
 function _isDarkMode(color) {
     const r = _applyGammaCorrection(color.r / 255);
     const g = _applyGammaCorrection(color.g / 255);
@@ -133,4 +142,5 @@ class Color {
     toCSSColor() {
         return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a / 255})`
     }
+
 }
