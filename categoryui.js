@@ -92,9 +92,10 @@ class ItemLayout {
             return Clutter.EVENT_STOP;
         }
 
-        this.ui.categoryUI.actor.hide();
-        this.ui.appUI.actor.show();
         this.ui.appUI.actor.vscroll.adjustment.set_value(this.ui.appUI.categoryUIs.get(this.categoryName).actor.get_position()[1]);
+
+        this.ui.categoryUI.actor.hide();
+        this.ui.appUI.actor.show();  
     }
 
     _onLeaveEvent() {

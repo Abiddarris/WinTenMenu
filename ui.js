@@ -80,7 +80,7 @@ class UI {
 
         this.appUI.actor.set_height(height);
     }
-this
+
     menuWidthChanged() {
         const width = this.getMenuWidth();
  
