@@ -80,7 +80,7 @@ class UI {
 
         this.appUI.actor.set_height(height);
     }
-
+this
     menuWidthChanged() {
         const width = this.getMenuWidth();
  
@@ -99,6 +99,8 @@ class UI {
             this.closeMenu();
         }
 
+        menu.box.style = `background-color: ${Color.getBackgroundColor(this.applet).toCSSColor()}`;
+    
         this._menu = menu;
         this._menu.open(true);
     }
