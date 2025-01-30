@@ -45,6 +45,12 @@ class StartMenu extends Applet.TextIconApplet {
         this.menu.addActor(this.ui.actor);
 
         this.onStartMenuColorChanged();
+
+        this.resizer = new Applet.PopupResizeHandler(this.menu.actor,
+                                              () => this.orientation,
+                                              (w,h) => this.ui.resize(w,h),
+                                              () => this.ui.getMenuWidth(),
+                                              () => this.ui.getMenuHeight());
     }
 
     onStartMenuColorChanged() {

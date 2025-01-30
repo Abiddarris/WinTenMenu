@@ -64,16 +64,48 @@ class UI {
         this.closeMenu();
     }
 
+    resize(width, height) {
+        if (width < this.getMinMenuWidth()) {
+            return;
+        }
+
+        if (height < this.getMinMenuHeight()) {
+            return;
+        }
+
+        this.menuHeightChanged(height);
+        this.menuWidthChanged(width);
+
+        if (!this.applet.resizer.resizingInProgress) {
+            this.applet.preferences.menuHeight = height / Display.getDisplaySize()[1] * 100;
+            this.applet.preferences.menuWidth = width / Display.getDisplaySize()[0] * 100;
+        }
+    }
+
+    getMinMenuHeight() {
+        return 50 * Display.getDisplaySize()[1] / 100;
+    }
+
+    getMinMenuWidth() {
+        return 15 * Display.getDisplaySize()[0] / 100;
+    }
+
     getMenuHeight() {
-        return this.applet.preferences["menuHeight"] * Display.getDisplaySize()[1] / 100;
+        return this.applet.preferences.menuHeight * Display.getDisplaySize()[1] / 100;
     }
 
     getMenuWidth() {
-        return this.applet.preferences["menuWidth"] * Display.getDisplaySize()[0] / 100;
+        return this.applet.preferences.menuWidth * Display.getDisplaySize()[0] / 100;
     }
 
-    menuHeightChanged() {
-        const height = this.getMenuHeight();
+    menuHeightChanged(height) {
+        if (!this.sidebar) {
+            return;
+        }
+
+        if (!height) {
+            height = this.getMenuHeight();
+        }
 
         this.sidebar.actor.set_height(height); 
         this.sidebar.onHeightChanged(height);
@@ -81,8 +113,14 @@ class UI {
         this.appUI.actor.set_height(height);
     }
 
-    menuWidthChanged() {
-        const width = this.getMenuWidth();
+    menuWidthChanged(width) {
+        if (!this.sidebar) {
+            return;
+        }
+
+        if (!width) {
+            width = this.getMenuWidth();
+        }
  
         this.actor.min_width = width;
         this.appUI.actor.set_width(width - this.sidebar.actor.get_width());

@@ -20,16 +20,13 @@ function loadSettings(applet, metadata, instanceId) {
     applet.preferences = {};
     applet.settings = new AppletSettings(applet.preferences, metadata["uuid"], instanceId);
 
-    applet.settings.bindProperty(BindingDirection.IN,
-                       "menu-width",
+    applet.settings.bind("menu-width",
                        "menuWidth",
-                       Lang.bind(applet.ui, applet.ui.menuWidthChanged),
-                       null);
-    applet.settings.bindProperty(BindingDirection.IN,
-                       "menu-height",
+                       () => applet.ui.menuWidthChanged());
+    applet.settings.bind("menu-height",
                        "menuHeight",
-                       Lang.bind(applet.ui, applet.ui.menuHeightChanged),
-                       null);
+                       () => applet.ui.menuHeightChanged());
+
     applet.settings.bindProperty(BindingDirection.IN, "menu-shortcut", "menuShortcut", applet.onShortcutChanged.bind(applet), null);
     applet.settings.bindProperty(BindingDirection.IN, "custom-start-menu-color", "customStartMenuColor", applet.onStartMenuColorChanged.bind(applet), null);
     applet.settings.bindProperty(BindingDirection.IN, "start-menu-color", "startMenuColor", applet.onStartMenuColorChanged.bind(applet), null);    
