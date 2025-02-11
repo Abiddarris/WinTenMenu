@@ -504,6 +504,18 @@ class Account extends PopupSidebarOption {
 
     constructor(sidebar) {
         super(sidebar, GLib.get_user_name(), "avatar-default");
+
+        const iconFile = Gio.File.new_for_path(GLib.get_home_dir() + "/.face");
+        if (!iconFile.query_exists(null)) {
+            return;
+        }
+
+        this.actor.remove_child(this.icon);
+        this.icon = new St.Icon({
+            gicon : new Gio.FileIcon({file: iconFile}),
+            icon_size : sidebar.icon_size
+        });
+        this.actor.add(this.icon);
     }
 
     populatePopupMenu(menu) {
