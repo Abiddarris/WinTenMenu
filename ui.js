@@ -26,6 +26,7 @@ const Display = require('./display');
 const AppUI = require('./appui');
 const CategoryUI = require('./categoryui');
 const Color = require('./color');
+const Cairo = imports.gi.cairo;
 
 class UI {
 
@@ -505,10 +506,22 @@ class Account extends PopupSidebarOption {
     constructor(sidebar) {
         super(sidebar, GLib.get_user_name(), "avatar-default");
 
-        const iconFile = Gio.File.new_for_path(GLib.get_home_dir() + "/.face");
+        let iconFile = Gio.File.new_for_path(GLib.get_home_dir() + "/.face");
         if (!iconFile.query_exists(null)) {
             return;
         }
+        const profileSurface = Cairo.ImageSurface.createFromPNG(iconFile.get_path());
+        const size = Math.min(profileSurface.getWidth(), profileSurface.getHeight());
+        const surface = new Cairo.ImageSurface(Cairo.Format.ARGB32, size, size);
+        const context = new Cairo.Context(surface);
+
+        context.arc(size / 2, size / 2, size / 2 , 0, 2 * Math.PI); 
+        context.clip();
+        context.setSourceSurface(profileSurface, size / 2 - profileSurface.getWidth() / 2, size / 2 - profileSurface.getHeight() / 2);
+        context.paint();
+
+        iconFile = Gio.File.new_for_path(GLib.get_home_dir() + "/.rounded-face");
+        surface.writeToPNG(iconFile.get_path());
 
         this.actor.remove_child(this.icon);
         this.icon = new St.Icon({
