@@ -16,6 +16,7 @@
 const Applet = imports.ui.applet;
 const PopupMenu = imports.ui.popupMenu;
 const Main = imports.ui.main;
+const Util = imports.misc.util;
 const St = imports.gi.St;
 const Cogl = imports.gi.Cogl;
 const Ui = require('./ui');
@@ -51,6 +52,10 @@ class StartMenu extends Applet.TextIconApplet {
                                               (w,h) => this.ui.resize(w,h),
                                               () => this.ui.getMenuWidth(),
                                               () => this.ui.getMenuHeight());
+    }
+
+    launchMenuEditor() {
+        Util.spawnCommandLine('cinnamon-menu-editor');
     }
 
     onStartMenuColorChanged() {

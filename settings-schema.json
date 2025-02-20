@@ -32,6 +32,11 @@
         "description":"Start menu's background color",
         "default":"rgb(255, 255, 255)",
         "dependency":"custom-start-menu-color"
+    },
+    "menu-editor-button": {
+        "type":"button",
+        "description":"Open the menu editor",
+        "callback":"launchMenuEditor"
     }
 }
 
