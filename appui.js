@@ -36,6 +36,7 @@ class AppUI {
         this.applications = new St.BoxLayout({ 
             vertical: true
         }); 
+        this._items = [];
 
         this.popupMenu = new PopupMenu.PopupMenu(this.ui.actor);
         this.popupMenu.actor.hide();
@@ -98,14 +99,22 @@ class AppUI {
             })
             .forEach(([key, apps]) => {
                 const categoryUI = new CategoryUI(ui, key);
+                this._items.push(categoryUI);
                 this.categoryUIs.set(key, categoryUI);
 
                 this.applications.add(categoryUI.actor);
-                
-                apps.forEach(app => this.applications.add(new ApplicationUI(ui, app).actor));
+                apps.forEach(app => {
+                    const applicationUI = new ApplicationUI(ui, app);
+                    this._items.push(applicationUI);
+                    this.applications.add(applicationUI.actor)
+                });
             });
 
         this.actor.add_actor(this.applications);
+    }
+
+    onStartMenuColorChanged() {
+        this._items.forEach((item) => item.onStartMenuColorChanged());
     }
 
     attachPopupMenu(box) {
@@ -195,10 +204,23 @@ class AppUIItem {
              reactive: true, 
              style: this.base_list_style
         });
+
+        this.label = new St.Label({
+            style: this._getLabelStyle()
+        });
+
  
         this.actor.connect('button-release-event', this._onReleaseEvent.bind(this));
         this.actor.connect('enter-event', this._enterEvent.bind(this));
         this.actor.connect('leave-event', this._onLeaveEvent.bind(this));
+    }
+
+    _getLabelStyle() {
+        return `padding-left: 7px; color: ${Color.getTextColor(this.ui.applet).toCSSColor()}`;
+    }
+
+    onStartMenuColorChanged() {
+        this.label.style = this._getLabelStyle();
     }
 
     _enterEvent() {
@@ -238,10 +260,6 @@ class CategoryUI extends AppUIItem {
     constructor(ui, name) {
         super(ui);
 
-        this.label = new St.Label({
-            style: `padding-left: 7px; color: ${Color.getTextColor(this.ui.applet).toCSSColor()}`
-        });
-
         const clutterText = this.label.get_clutter_text();
         clutterText.set_text(name);
 
@@ -265,10 +283,6 @@ class ApplicationUI extends AppUIItem {
         super(ui);
 
         this.app = app;
-
-        this.label = new St.Label({
-            style: `padding-left: 7px; color: ${Color.getTextColor(this.ui.applet).toCSSColor()}`
-        });
 
         const clutterText = this.label.get_clutter_text();
         clutterText.set_text(app.get_name());

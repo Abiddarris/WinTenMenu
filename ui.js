@@ -65,6 +65,12 @@ class UI {
         this.closeMenu();
     }
 
+    onStartMenuColorChanged() {
+        this.sidebar.onStartMenuColorChanged();
+        this.categoryUI.onStartMenuColorChanged();
+        this.appUI.onStartMenuColorChanged();
+    }
+
     resize(width, height) {
         if (width < this.getMinMenuWidth()) {
             return;
@@ -110,7 +116,6 @@ class UI {
 
         this.sidebar.actor.set_height(height); 
         this.sidebar.onHeightChanged(height);
-
         this.appUI.actor.set_height(height);
     }
 
@@ -202,6 +207,12 @@ class SideBar {
         return 17 * Display.getDisplaySize()[0] / 100;
     }
 
+    onStartMenuColorChanged() {
+        this.options.forEach((option) => {
+                option.onStartMenuColorChanged();
+        });
+        
+    }
 
     getSidebarOptionHeight() {
         return this.option_padding * 2 + this.icon_size;
@@ -361,14 +372,24 @@ class SidebarOption {
             icon_size: sidebar.icon_size
         });
 
+        this._calculateLabelStyle();
         this.label = new St.Label({
-            style: `padding-left: 7px; color: ${Color.getTextColor(this.sidebar.ui.applet).toCSSColor()}`
+            style: this._labelStyle
         });
 
         const clutterText = this.label.get_clutter_text();
         clutterText.set_markup(this.label_string);
 
         this.actor.add(this.icon);
+    }
+
+    _calculateLabelStyle() {
+        this._labelStyle = `padding-left: 7px; color: ${Color.getTextColor(this.sidebar.ui.applet).toCSSColor()}`;
+    }
+
+    onStartMenuColorChanged() {
+        this._calculateLabelStyle();
+        this.label.style = this._labelStyle;
     }
 
     attachPopupMenu(box) {

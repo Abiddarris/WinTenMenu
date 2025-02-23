@@ -60,6 +60,7 @@ class StartMenu extends Applet.TextIconApplet {
 
     onStartMenuColorChanged() {
         this.menu.box.style = `background-color: ${Color.getBackgroundColor(this).toCSSColor()}`;
+        this.ui.onStartMenuColorChanged();
     }
 
     onShortcutChanged() {

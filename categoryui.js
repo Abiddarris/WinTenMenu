@@ -38,6 +38,10 @@ class CategoryUI {
         });
     }
 
+    onStartMenuColorChanged() {
+        this.categories.forEach((category) => category.onStartMenuColorChanged());
+    }
+
     onResize() {
         this.actor.set_x((this.ui.getMenuWidth() - this.ui.sidebar.min_width) / 2 - this.actor.get_width() / 2 + this.ui.sidebar.min_width);
         this.actor.set_y(this.ui.getMenuHeight() / 2 - this.actor.get_height() / 2);
@@ -57,13 +61,21 @@ class ItemLayout {
         this.box.connect('enter-event', this._enterEvent.bind(this));
         this.box.connect('leave-event', this._onLeaveEvent.bind(this));
        
-        this.label = new St.Label({style : `color: ${this._isEnabled() ? Color.getTextColor(this.ui.applet).toCSSColor() : "#A0A0A0"};`});
+        this.label = new St.Label({style : this._getLabelStyle()});
         
         const clutterText = this.label.get_clutter_text();
         clutterText.set_text(categoryName);
 
         this.actor.add_actor(this.box);
         this.box.add_actor(this.label);
+    }
+
+    _getLabelStyle() {
+        return `color: ${this._isEnabled() ? Color.getTextColor(this.ui.applet).toCSSColor() : "#A0A0A0"};`;
+    }
+
+    onStartMenuColorChanged() {
+        this.label.style = this._getLabelStyle();
     }
 
     _isEnabled() {
