@@ -63,7 +63,6 @@ class StartMenu extends Applet.TextIconApplet {
     }
 
     onShortcutChanged() {
-        console.log(this.preferences);
         Main.keybindingManager.addHotKey("menu-shortcut-" + this.instance_id, this.preferences.menuShortcut, () => {                              
             if (Main.overview.visible || Main.expo.visible) return;
 
@@ -73,6 +72,10 @@ class StartMenu extends Applet.TextIconApplet {
 
     on_applet_clicked() {
         this.menu.toggle();
+    }
+
+    on_applet_removed_from_panel() {
+        Main.keybindingManager.removeHotKey("menu-shortcut-" + this.instance_id);
     }
 
     closeMenu() {
